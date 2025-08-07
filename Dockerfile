@@ -1,17 +1,26 @@
-# Use official Python image
+# Use official slim Python image
 FROM python:3.10-slim
 
-# Set environment variables
+# Prevent Python from writing .pyc files and enable unbuffered output
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    curl \
+    wget \
+    gnupg \
     unzip \
+    curl \
     git \
-    chromium-driver \
+    fonts-liberation \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libxss1 \
+    libasound2 \
+    libgbm1 \
+    libgtk-3-0 \
     chromium \
+    chromium-driver \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -24,10 +33,10 @@ COPY . /app
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-# Set environment path for Chrome
-ENV PATH="/usr/lib/chromium/:${PATH}"
-ENV CHROME_BIN="/usr/bin/chromium"
-ENV CHROMEDRIVER_PATH="/usr/lib/chromium/chromedriver"
+# Set environment variables required by Selenium
+ENV CHROME_BIN=/usr/bin/chromium
+ENV CHROMEDRIVER_PATH=/usr/lib/chromium/chromedriver
+ENV PATH=$CHROMEDRIVER_PATH:$PATH
 
-# Expose no port (not a web server)
+# Run your scraping script
 CMD ["python", "grays_scraper_cloud.py"]
