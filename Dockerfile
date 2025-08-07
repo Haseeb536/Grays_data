@@ -61,4 +61,6 @@ RUN pip install --upgrade pip && pip install -r requirements.txt
 COPY . /app
 WORKDIR /app
 
-CMD ["python", "script1.py"]
+# Define the default command to run the Python script
+CMD ["python", "grays_scraper_cloud.py"]
+
