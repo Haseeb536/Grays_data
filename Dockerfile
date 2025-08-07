@@ -55,13 +55,17 @@ RUN curl -O https://dl.google.com/linux/direct/google-chrome-stable_current_amd6
     rm google-chrome-stable_current_amd64.deb
 
 # Install matching ChromeDriver version
-RUN CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+') && \
+RUN apt-get update && apt-get install -y --no-install-recommends unzip ca-certificates && \
+    CHROME_VERSION=$(google-chrome --version | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+') && \
+    echo "Detected Chrome version: $CHROME_VERSION" && \
     CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION") && \
+    echo "Using Chromedriver version: $CHROMEDRIVER_VERSION" && \
     wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" && \
     unzip chromedriver_linux64.zip && \
     mv chromedriver /usr/local/bin/chromedriver && \
     chmod +x /usr/local/bin/chromedriver && \
     rm chromedriver_linux64.zip
+
 
 # Install Python dependencies
 COPY requirements.txt .
@@ -73,3 +77,4 @@ WORKDIR /app
 
 # Default command
 CMD ["python", "grays_scraper_cloud.py"]
+
