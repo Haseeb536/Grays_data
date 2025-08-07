@@ -1,0 +1,9 @@
+flask
+selenium
+pandas
+openai
+webdriver-manager
+bs4
+requests
+undetected-chromedriver
+beautifulsoup4
