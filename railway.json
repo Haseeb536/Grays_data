@@ -1,8 +1,5 @@
 {
   "build": {
-    "builder": "Docker"
-  },
-  "deploy": {
-    "startCommand": "python grays_scraper_cloud.py"
+    "builder": "Dockerfile"
   }
 }
