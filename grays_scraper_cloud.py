@@ -123,8 +123,8 @@ def main():
     options.add_argument("--no-sandbox")
     options.add_argument("--window-size=1920,1080")
     options.add_experimental_option("excludeSwitches", ["enable-logging"])
-
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+    service = Service()
+    driver = webdriver.Chrome(service=service, options=options)
 
     for category in categories:
         try:
