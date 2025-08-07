@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.10-slim
 
 # Set environment variables to reduce prompts and allow Chrome to run
 ENV DEBIAN_FRONTEND=noninteractive
@@ -63,4 +63,5 @@ WORKDIR /app
 
 # Define the default command to run the Python script
 CMD ["python", "grays_scraper_cloud.py"]
+
 
