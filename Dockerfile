@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.10-slim 
 
 # Set environment variables to reduce prompts and allow Chrome to run
 ENV DEBIAN_FRONTEND=noninteractive
@@ -62,3 +62,4 @@ COPY . /app
 WORKDIR /app
 # Run your scraping script
 CMD ["python", "grays_scraper_cloud.py"]
+
