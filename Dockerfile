@@ -1,12 +1,9 @@
-# Use a Python 3.10 slim base image
-FROM python:3.10-slim
+FROM python:3.12-slim
 
-# Set environment variables to avoid interactive prompts and define paths
+# Set environment variables to reduce prompts and allow Chrome to run
 ENV DEBIAN_FRONTEND=noninteractive
-ENV CHROME_BIN=/usr/bin/google-chrome
-ENV CHROMEDRIVER_PATH=/usr/local/bin/chromedriver
 
-# Install core dependencies for Chrome and other tools
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     wget \
     curl \
@@ -50,36 +47,18 @@ RUN apt-get update && apt-get install -y \
     --no-install-recommends && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome from the official source
+# Install Chrome
 RUN curl -O https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     apt-get update && \
     apt-get install -y ./google-chrome-stable_current_amd64.deb && \
     rm google-chrome-stable_current_amd64.deb
 
-# Install the matching ChromeDriver version
-# The previous command failed because the specific Chrome version (e.g., 139.0.7258)
-# often doesn't have a direct LATEST_RELEASE file. This updated command gets
-# the major version of Chrome and then finds the latest compatible Chromedriver.
-RUN apt-get update && apt-get install -y --no-install-recommends unzip ca-certificates && \
-    CHROME_VERSION=$(google-chrome --version | grep -o '[0-9]\+\.[0-9]\+\.[0-9]\+') && \
-    CHROME_MAJOR_VERSION=$(echo "$CHROME_VERSION" | cut -d '.' -f 1) && \
-    echo "Detected Chrome version: $CHROME_VERSION" && \
-    echo "Detected Chrome major version: $CHROME_MAJOR_VERSION" && \
-    CHROMEDRIVER_VERSION=$(curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_MAJOR_VERSION") && \
-    echo "Using Chromedriver version: $CHROMEDRIVER_VERSION" && \
-    wget -q "https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip" && \
-    unzip chromedriver_linux64.zip && \
-    mv chromedriver /usr/local/bin/chromedriver && \
-    chmod +x /usr/local/bin/chromedriver && \
-    rm chromedriver_linux64.zip
-
-# Install Python dependencies from requirements.txt
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Copy application files and set the working directory
+# Add your scripts
 COPY . /app
 WORKDIR /app
 
-# Define the default command to run the Python script
-CMD ["python", "grays_scraper_cloud.py"]
+CMD ["python", "script1.py"]
