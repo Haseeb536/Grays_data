@@ -1,47 +1,64 @@
-# Use official slim Python image
-FROM python:3.10-slim
+FROM python:3.12-slim
 
-# Prevent Python from writing .pyc files and enable unbuffered output
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
+# Set environment variables to reduce prompts and allow Chrome to run
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     wget \
-    gnupg \
     curl \
+    gnupg \
     unzip \
-    git \
     fonts-liberation \
-    libnss3 \
-    libatk-bridge2.0-0 \
-    libxss1 \
+    libappindicator3-1 \
     libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libc6 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libexpat1 \
+    libfontconfig1 \
     libgbm1 \
+    libgcc1 \
+    libglib2.0-0 \
     libgtk-3-0 \
-    libu2f-udev \
-    ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libpangocairo-1.0-0 \
+    libstdc++6 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxss1 \
+    libxtst6 \
+    lsb-release \
+    xdg-utils \
+    --no-install-recommends && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome (instead of Chromium)
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get update && apt-get install -y google-chrome-stable && \
-    rm -rf /var/lib/apt/lists/*
-
-# Set working directory
-WORKDIR /app
-
-# Copy project files
-COPY . /app
+# Install Chrome
+RUN curl -O https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt-get update && \
+    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
+    rm google-chrome-stable_current_amd64.deb
 
 # Install Python dependencies
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
+COPY requirements.txt .
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Set environment variables for Selenium
-ENV CHROME_BIN="/usr/bin/google-chrome"
-ENV CHROMEDRIVER_PATH="/usr/local/bin/chromedriver"
-
+# Add your scripts
+COPY . /app
+WORKDIR /app
 # Run your scraping script
 CMD ["python", "grays_scraper_cloud.py"]
