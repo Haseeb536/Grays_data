@@ -13,7 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 import openai
 import json
 import undetected_chromedriver as uc
-openai.api_key = "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"
+
 
 # Helper: GPT Functions
 def get_year_make_model_variant_from_gpt(title):
